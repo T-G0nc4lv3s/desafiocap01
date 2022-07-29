@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thiagosantana.desafiocap01.entities.Client;
+import com.thiagosantana.desafiocap01.dto.ClientDTO;
 import com.thiagosantana.desafiocap01.services.ClientService;
 
 @RestController
@@ -17,11 +17,11 @@ public class ClientResource {
 	
 	@Autowired
 	private ClientService service;
-
+	
 	@GetMapping
-	public ResponseEntity<List<Client>> findAll(){
-
-		List<Client> list = service.findAll();
-		return ResponseEntity.ok().body(list);
+	public ResponseEntity<List<ClientDTO>> findAll(){
+		List<ClientDTO> listDto = service.findAll();
+		return ResponseEntity.ok().body(listDto);
+		
 	}	
 }
