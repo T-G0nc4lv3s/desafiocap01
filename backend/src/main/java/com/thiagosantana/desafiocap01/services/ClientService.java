@@ -1,12 +1,13 @@
 package com.thiagosantana.desafiocap01.services;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +23,9 @@ public class ClientService {
 	private ClientRepository repository;
 	
 	@Transactional(readOnly = true)
-	public List<ClientDTO> findAll(){
-		List<Client> list = repository.findAll();
-		return list.stream().map(cli -> new ClientDTO(cli)).collect(Collectors.toList());
+	public Page<ClientDTO> findAllPaged(PageRequest pageRequest) {
+		Page<Client> pages = repository.findAll(pageRequest);
+		return pages.map(p -> new ClientDTO(p));
 	}
 	
 	@Transactional(readOnly = true)
@@ -55,6 +56,17 @@ public class ClientService {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
 	}
+	
+	@Transactional
+	public void delete(Long id) {
+		try {
+			repository.deleteById(id);
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("Id not found " + id);
+		}
+		
+	}
 
 	private void dtoToEntity(Client client, ClientDTO dto) {
 		client.setName(dto.getName());
@@ -63,4 +75,6 @@ public class ClientService {
 		client.setBirthDate(dto.getBirthDate());
 		client.setChildren(dto.getChildren());
 	}
+
+	
 }
